@@ -1,0 +1,30 @@
+{
+  "name": "starter-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write .",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "test": "ts-mocha -p tsconfig.json tests/**/*.test.ts",
+    "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
+  },
+  "dependencies": {
+    "@types/luxon": "^3.3.2",
+    "luxon": "^3.4.3",
+    "node-appwrite": "^9.0.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/expect": "^24.3.0",
+    "@types/mocha": "^10.0.1",
+    "@types/node": "^20.6.3",
+    "chai": "^4.3.8",
+    "nyc": "^15.1.0",
+    "prettier": "^3.0.0",
+    "ts-mocha": "^10.0.0",
+    "typescript": "^5.2.2"
+  }
+}

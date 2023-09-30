@@ -1,0 +1,38 @@
+{
+  "name": "ailab",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --fix --ignore-path .gitignore"
+  },
+  "dependencies": {
+    "@mdi/font": "7.0.96",
+    "@tiptap/pm": "^2.1.8",
+    "@tiptap/starter-kit": "^2.1.8",
+    "@tiptap/vue-3": "^2.1.8",
+    "appwrite": "^11.0.0",
+    "core-js": "^3.29.0",
+    "lru-cache": "^10.0.1",
+    "roboto-fontface": "*",
+    "uuid": "^9.0.1",
+    "vee-validate": "^4.11.1",
+    "vue": "^3.2.0",
+    "vue-cal": "^4.8.1",
+    "vue-router": "^4.0.0",
+    "vuetify": "^3.0.0",
+    "webfontloader": "^1.0.0",
+    "yup": "^1.2.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.0.0",
+    "eslint": "^8.37.0",
+    "eslint-plugin-vue": "^9.3.0",
+    "sass": "^1.64.2",
+    "typescript": "^5.1.6",
+    "vite": "^4.2.0",
+    "vite-plugin-vuetify": "^1.0.0"
+  }
+}
