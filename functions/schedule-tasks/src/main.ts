@@ -152,6 +152,7 @@ export default async ({ req, res, log, error }) => {
     
     // delete all tasks that does have a parentID
     const documentsWithParentIDs: any[] = Array.isArray(collection?.documents) ? collection.documents.filter(({ parentID }: any) => parentID) : [];
+    log({ documentsWithParentIDs });
     const deletePromises = documentsWithParentIDs.map(({ $id }: any) => databases.deleteDocument('64d2c0765d92b052b3e0', '6501cbe36f6bb2db7c6f', $id));
     await Promise.all(deletePromises);
 
