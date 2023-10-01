@@ -27,7 +27,8 @@
       </v-list>
     </v-menu>
 
-    <v-btn variant="flat" class="ml-0 mr-6" size="small" prepend-icon="mdi-plus" @click.stop="addTasksDrawer = !addTasksDrawer">Add Tasks</v-btn>
+    <v-btn variant="flat" class="ml-0 mr-2" size="small" prepend-icon="mdi-plus" @click.stop="addTasksDrawer = !addTasksDrawer">Add Tasks</v-btn>
+    <v-btn variant="outlined" class="ml-0 mr-6" size="small" @click="refresh()"><v-icon icon="mdi-refresh"></v-icon></v-btn>
 
   </v-app-bar>
 
@@ -56,6 +57,19 @@
       <v-btn variant="text" @click="notification.show = false" color="white">Close</v-btn>
     </template>
   </v-snackbar>
+
+  <!-- Full page loader -->
+  <v-overlay
+    :model-value="loading"
+    class="align-center justify-center"
+    :persistent="true"
+  >
+    <v-progress-circular
+      color="primary"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
 </template>
 
 <script setup>
@@ -69,8 +83,22 @@
   import UpsertMultipleTasks from '@/components/tasks/UpsertMultipleTasks.vue';
 
   const notification = ref({ show: false, text: '', variant: 'success' });
+  const loading = ref(false);
   const addTasksDrawer = ref(false);
   const router = useRouter();
+
+  const refresh = async () => {
+    try {
+      loading.value = true;
+      const functions = new Functions(client);
+      await functions.createExecution(af['schedule-tasks']);
+      store.refreshTasks = true;
+    } catch (error) {
+      console.log({ error });
+      notification.value = { show: true, text: 'Error saving task', variant: 'error' };
+    }
+    loading.value = false;
+  }
 
   const getFirstLetter = (name) => {
     if (!name) return '';

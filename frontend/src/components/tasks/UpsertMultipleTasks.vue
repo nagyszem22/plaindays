@@ -42,6 +42,7 @@ import { ref, defineEmits } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
 import { client, adb, adbc, af } from '@/config';
 import { Databases, Functions } from 'appwrite';
+import { store } from '@/store';
 
 const notification = ref({ show: false, text: '', variant: 'success' });
 const loading = ref(false);
@@ -87,11 +88,14 @@ const saveTasks = async () => {
       duration: 1 * 60 * 60 * 1000,
     }];
 
+    store.refreshTasks = true;
+
     loading.value = false;
     emit('close');
   } catch (error) {
     console.log({ error });
     notification.value = { show: true, text: 'Error saving task', variant: 'error' };
   }
+  loading.value = false;
 }
 </script>
