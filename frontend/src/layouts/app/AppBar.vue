@@ -1,9 +1,7 @@
 <template>
   <v-app-bar :elevation="1">
     <!-- Logo -->
-    <v-app-bar-title class="text-primary">
-      <v-icon icon="mdi-test-tube" class="mr-2" /><b>GPT</b>ground
-    </v-app-bar-title>
+    <div class="text-primary logo" @click="$router.push({ name: 'DashboardView' })">PlainDays</div>
 
     <!-- Spacer -->
     <v-spacer></v-spacer>
@@ -19,7 +17,7 @@
         </v-chip>
       </template>
       <v-list>
-        <v-list-item style="font-size: 14px" density="compact" prepend-icon="mdi-account">
+        <v-list-item style="font-size: 14px" density="compact" prepend-icon="mdi-account" @click="$router.push({ name: 'OnboardingView' })">
           Account
         </v-list-item>
         <v-divider></v-divider>
@@ -93,10 +91,22 @@
     const account = new Account(client);
     try {
       await account.deleteSession('current');
-      router.push({ name: 'LoginView' });
+      store.account = null;
+      router.push({ name: 'HomeView' });
     } catch (error) {
       console.log(error);
       notification.value = { show: true, text: error.message, variant: 'error' };
     }
   }
 </script>
+
+<style scoped>
+  .logo {
+    text-align: center;
+    font-family: 'Pacifico', cursive;
+    font-size: 22px;
+    color: #F6416C;
+    cursor: pointer;
+    width: 150px;
+  }
+</style>

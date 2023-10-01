@@ -26,6 +26,19 @@
         <v-btn variant="text" color="white" @click="notification.show = false">Close</v-btn>
       </template>
     </v-snackbar>
+
+    <v-overlay
+      v-if="loading"
+      :model-value="loading"
+      class="align-center justify-center"
+      :persistent="true"
+    >
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
   </v-container>
 </template>
 
@@ -35,6 +48,7 @@ import { useRouter } from 'vue-router'
 import { Account, ID } from 'appwrite';
 import { client } from './../config';
 import { useForm } from 'vee-validate';
+import { store } from '@/store';
 import * as yup from 'yup';
 
 const notification = ref({ show: false, text: '', variant: 'success' });
@@ -77,7 +91,15 @@ const submit = handleSubmit( async ({ name, email, password }) => {
   try {
     await account.create(ID.unique(), email, password, name);
     await account.createEmailSession(email, password);
-    router.push({ name: 'DashboardView' });
+    store.account = await account.get();
+    await account.updatePrefs({
+      dayStart: 8,
+      dayEnd: 22,
+      workStart: 9,
+      workEnd: 18,
+      timeZone: Intl?.DateTimeFormat().resolvedOptions().timeZone || null,
+    })
+    router.push({ name: 'OnboardingView' });
   } catch (error) {
     notification.value = { show: true, text: error.message, variant: 'error' };
     console.error(error);

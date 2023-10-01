@@ -1,6 +1,7 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router';
-import { store } from '@/store';
+import { Account } from 'appwrite';
+import { client } from './../config';
 
 const routes = [
   {
@@ -36,9 +37,9 @@ const routes = [
         component: () => import(/* webpackChunkName: "dashboard" */ '@/views/DashboardView.vue'),
       },
       {
-        path: '/app/notes',
-        name: 'NotesView',
-        component: () => import(/* webpackChunkName: "notes" */ '@/views/NotesView.vue'),
+        path: '/app/onboarding',
+        name: 'OnboardingView',
+        component: () => import(/* webpackChunkName: "onboarding" */ '@/views/OnboardingView.vue'),
       },
     ],
   },
@@ -50,18 +51,18 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
+  const account = new Account(client);
   try {
-    const user = store.account;
+    const user = await account.get();
     if (to?.meta?.auth === true && !user) {
-      return { name: 'LoginView' };
+      return { name: 'HomeView' };
     }
     if (to?.meta?.auth === false && user) {
       return { name: 'DashboardView' };
     }
   } catch (error) {
-    console.log('error', error);
     if (to?.meta?.auth === true) {
-      return { name: 'LoginView' };
+      return { name: 'HomeView' };
     }
   }
   return true;
