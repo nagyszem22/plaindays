@@ -40,7 +40,7 @@
 import TaskEditorCard from '@/components/tasks/TaskEditorCard.vue';
 import { ref, defineEmits } from 'vue';
 import { v4 as uuidv4 } from 'uuid';
-import { client, adb, adbc } from '@/config';
+import { client, adb, adbc, af } from '@/config';
 import { Databases, Functions } from 'appwrite';
 
 const notification = ref({ show: false, text: '', variant: 'success' });
@@ -76,7 +76,7 @@ const saveTasks = async () => {
       databases.createDocument(adb['App'], adbc['Events'], id, data);
     });
     await Promise.all(creates);
-    await functions.createExecution('650d7f4fa106f174d42f');
+    await functions.createExecution(af['schedule-tasks']);
 
     tasks.value = [{
       id: uuidv4(),

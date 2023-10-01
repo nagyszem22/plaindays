@@ -8,7 +8,7 @@ client
 
   // appwrite function ids
   const af = {
-    ['Account:SendEmailVerification']: '64d16a736bb21ef0c675'
+    ['schedule-tasks']: '650d7f4fa106f174d42f'
   };
 
   // appwrite database ids
@@ -18,7 +18,6 @@ client
 
   // appwrite collection ids
   const adbc = {
-    ['UserNotifications']: '64d2c08665fe3c0a585d',
     ['Events']: '6501cbe36f6bb2db7c6f'
   }
 

@@ -1,6 +1,8 @@
 import { Client, Databases, ID, Query } from 'node-appwrite';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime, Duration } from "luxon";
+// @ts-expect-error
+import { abd, abdc, appwriteEndpoint } from './config';
 
 export type Task = {
   id?: string
@@ -70,7 +72,7 @@ const DEFAULT_TIME_ZONE: string = 'Europe/London';
 
 export default async ({ req, res, log, error }) => {
   const client = new Client()
-    .setEndpoint('https://cloud.appwrite.io/v1')
+    .setEndpoint(appwriteEndpoint)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID);
 
   if (req.headers['x-appwrite-user-jwt']) {
@@ -91,7 +93,7 @@ export default async ({ req, res, log, error }) => {
     // @TODO: validate tasks making sure that they can actually be scheduled and fit in the desired time slots
     // a task can not be longer then the duration of the slot it is scheduled for if it can not be split
 
-    const collection = await databases.listDocuments('64d2c0765d92b052b3e0', '6501cbe36f6bb2db7c6f', [
+    const collection = await databases.listDocuments(abd['App'], abdc['Events'], [
       Query.select(['$id', 'title', 'content', 'parentID', 'deadline', 'urgency', 'priority', 'scheduleType', 'duration', 'canSplit',
         'isSplit', 'isDone', 'userID', 'start', 'end']),
       Query.equal('isDone', [ false ]),

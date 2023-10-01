@@ -6,12 +6,12 @@
           <v-sheet height="100%">
             <vue-cal
               :selected-date="new Date()"
-              :disable-views="['years', 'year']"
+              :disable-views="['years', 'year', 'month']"
               :snap-to-time="5"
               events-on-month-view="short"
               @eventDragCreate="onEventCreate"
               @eventDurationChange="onEventChange"
-              :editable-events="{ title: false, drag: false, resize: false, delete: false, create: true }"
+              :editable-events="{ title: false, drag: false, resize: false, delete: false, create: false }"
               :events="events"
             />
           </v-sheet>
@@ -111,13 +111,11 @@ const onEventChange = (event) => {
 
 <style>
 .vuecal__event {
-  background-color: #2980b9;
-  border: 1px solid #185d8b;
-  font-weight: bold;
+  background-color: #E5ECF7;
+  border: 1px solid #286EC3;
   font-size: 14px;
-  border-radius: 4px;
   padding: 10px;
-  color: #fff;
+  color: #286EC3;
 }
 .vuecal__view-btn {
   font-size: 16px;
