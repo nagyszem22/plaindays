@@ -2,7 +2,7 @@
   <v-menu>
     <template v-slot:activator="{ props: active }">
       <div class="d-inline-flex flex-column">
-        <small class="mb-1" style="color: #444; font-style: italic;">{{ label }}</small>
+        <small class="mb-1" style="color: #444; font-weight: 500;">{{ label }}</small>
         <v-chip :class="customClass || null" v-bind="active" label>{{ title }}</v-chip>
       </div>
     </template>
