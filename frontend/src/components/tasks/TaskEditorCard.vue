@@ -63,7 +63,7 @@ const priorityOptions = [
 ];
 
 const hours = ref(1);
-const hoursOptions = [0,1,2,3,4,5,6,7,8,9,10].map(num => ({ title: `${num}h`, value: num }));
+const hoursOptions = [0,1,2,3].map(num => ({ title: `${num}h`, value: num }));
 const minutes = ref(0);
 const minutesOptions = [0,5,10,15,20,25,30,35,40,45,50,55].map(num => ({ title: `${num}m`, value: num }));
 
