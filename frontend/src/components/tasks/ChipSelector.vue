@@ -1,7 +1,10 @@
 <template>
   <v-menu>
     <template v-slot:activator="{ props: active }">
-      <v-chip :class="customClass || null" v-bind="active">{{ title }}</v-chip>
+      <div class="d-inline-flex flex-column">
+        <small class="mb-1" style="color: #444; font-style: italic;">{{ label }}</small>
+        <v-chip :class="customClass || null" v-bind="active" label>{{ title }}</v-chip>
+      </div>
     </template>
 
     <v-list>
@@ -25,7 +28,7 @@
 import { ref, defineProps, computed, defineEmits, onBeforeMount } from 'vue';
 
 const emit = defineEmits([ 'update:value' ]);
-const props = defineProps([ 'value', 'options', 'customClass' ]);
+const props = defineProps([ 'value', 'options', 'customClass', 'label' ]);
 const selected = ref(null);
 
 onBeforeMount(() => {

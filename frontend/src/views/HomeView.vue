@@ -4,7 +4,7 @@
       <v-row>
         <v-col cols="12" md="8" offset-md="2">
           <div class="logo mb-8">PlainDays</div>
-          <p class="subtitle pb-4">Less complexity more control - Simple and fully automated task scheduling for a stress-free life.</p>
+          <p class="subtitle pb-4">Less complexity, more control - Simple and fully automated task scheduling for a stress-free life.</p>
           <p class="punchline">Manage all your tasks in one place and never miss a deadline anymore.</p>
           <div class="text-center mt-9">
             <v-btn class="mr-6" color="primary" variant="outlined" size="large"  @click="() => $router.push({ name: 'LoginView' })">🧑 Sign In</v-btn>

@@ -15,13 +15,13 @@
     ></v-text-field>
     <div class="d-flex justify-space-between">
       <div>
-        <chip-selector :customClass="{ 'mr-2': true }" v-model:value="urgency" :options="urgencyOptions" />
-        <chip-selector :customClass="{ 'mr-2': true }" v-model:value="scheduleType" :options="scheduleTypeOptions" />
-        <chip-selector :customClass="{ 'mr-2': true }" v-model:value="priority" :options="priorityOptions" />
+        <chip-selector label="Finish by..." :customClass="{ 'mr-3': true }" v-model:value="urgency" :options="urgencyOptions" />
+        <chip-selector label="Do it..." :customClass="{ 'mr-3': true }" v-model:value="scheduleType" :options="scheduleTypeOptions" />
+        <chip-selector label="Priority" :customClass="{ 'mr-3': true }" v-model:value="priority" :options="priorityOptions" />
       </div>
       <div>
-        <chip-selector :customClass="{ 'rounded-e-0': true, 'pr-1': true }" v-model:value="hours" :options="hoursOptions" />
-        <chip-selector :customClass="{ 'rounded-s-0': true, 'pl-1': true, 'mr-2': canDelete }" v-model:value="minutes" :options="minutesOptions" />
+        <chip-selector label="Est." :customClass="{ 'rounded-e-0': true, 'pr-1': true }" v-model:value="hours" :options="hoursOptions" />
+        <chip-selector label="Time" :customClass="{ 'rounded-s-0': true, 'pl-1': true, 'mr-2': canDelete }" v-model:value="minutes" :options="minutesOptions" />
         <v-chip v-if="canDelete" color="primary" @click="emit('delete')"><v-icon icon="mdi-close"></v-icon></v-chip>
       </div>
     </div>
@@ -49,9 +49,9 @@ const urgencyOptions = [
 
 const scheduleType = ref('WORK_HOURS');
 const scheduleTypeOptions = [
-  { title: '💼 Work', value: 'WORK_HOURS' },
+  { title: '💼 During Work', value: 'WORK_HOURS' },
   { title: '🌅 Before Work', value: 'BEFORE_WORK_HOURS' },
-  { title: '🌝 After Work', value: 'BEFORE_WORK_HOURS' },
+  { title: '🌝 After Work', value: 'AFTER_WORK_HOURS' },
   { title: '🕰 Anytime', value: 'NONE' },
 ];
 

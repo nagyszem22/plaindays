@@ -119,7 +119,7 @@
                   <h2 class="pb-6">👋 Welcome to PlainDays!</h2>
                   <p class="pb-3">This app is a simple automated task scheduling tool for busy individuals.</p>
                   <p class="pb-3">The main goal of this platform to reduce the time you spend on figuring out what you need to do.</p>
-                  <p>Please note that there are many new features that are planned to be released soon e.g.:</p>
+                  <p>Please note that there are many new features planned to be released soon e.g.:</p>
                   <ul class="pa-3">
                     <li>Support for events (e.g.: meeting)</li>
                     <li>Support for work days and rest days (e.g.: weekends)</li>
