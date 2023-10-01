@@ -16,7 +16,7 @@ import { createVuetify } from 'vuetify';
 const brandedTheme = {
   dark: false,
   colors: {
-    background: '#F8F3D4',
+    background: '#fff',
     surface: '#FFFFFF',
     primary: '#F6416C',
     'primary-darken-1': '#C62C50',

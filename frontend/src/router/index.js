@@ -1,7 +1,5 @@
 // Composables
 import { createRouter, createWebHistory } from 'vue-router';
-import { Account } from 'appwrite';
-import { client } from './../config';
 import { store } from '@/store';
 
 const routes = [
@@ -52,9 +50,8 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to) => {
-  const account = new Account(client);
   try {
-    const user = store.account || (await account.get());
+    const user = store.account;
     if (to?.meta?.auth === true && !user) {
       return { name: 'LoginView' };
     }

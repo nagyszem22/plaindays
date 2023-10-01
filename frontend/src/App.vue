@@ -1,11 +1,21 @@
 <template>
-  <div v-if="isLoading">Loading ...</div>
-  <div v-else-if="error">Error: {{ error.message }}</div>
+  <v-overlay
+    v-if="isLoading"
+    :model-value="isLoading"
+    class="align-center justify-center"
+    :persistent="true"
+  >
+    <v-progress-circular
+      color="primary"
+      indeterminate
+      size="64"
+    ></v-progress-circular>
+  </v-overlay>
   <router-view v-else />
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted } from 'vue';
 import { Account } from 'appwrite';
 import { client } from '@/config';
 import { store } from '@/store';
@@ -25,8 +35,6 @@ import { store } from '@/store';
 // 10. Test the whole flow with Cypress (try to avoid testing manually as much as possible)
 
 const isLoading = ref(true);
-const error = ref(null);
-let unsubscribe = null;
 
 onMounted(async () => {
   // get account and load account to store
@@ -34,27 +42,10 @@ onMounted(async () => {
     const account = new Account(client);
     store.account = await account.get();
   } catch (error) {
-    error.value = error;
+    console.log(error);
   }
 
   // stop loading page
   isLoading.value = false;
-
-  // subscribe to account updates
-  unsubscribe = client.subscribe('account', response => {
-    if (!response?.payload || !Array.isArray(response?.events)) {
-      return;
-    }
-    if (response.events.includes('users.*.update')) {
-      store.account = response?.payload ? response.payload : store.account;
-    }
-  });
-});
-
-// unsubscribe on unmount
-onUnmounted(() => {
-  if (unsubscribe) {
-    unsubscribe();
-  }
 });
 </script>

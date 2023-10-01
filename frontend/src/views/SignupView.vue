@@ -4,6 +4,7 @@
       <v-row>
         <v-col cols="12" sm="8" offset-sm="2" md="4" offset-md="4">
           <v-card class="pa-6">
+            <div class="logo mb-8" @click="() => $router.push({ name: 'HomeView' })">PlainDays</div>
             <v-spacer class="mt-3"></v-spacer>
             <v-text-field v-bind="name" label="Full Name" />
             <v-text-field v-bind="email" label="Email" />
@@ -84,3 +85,13 @@ const submit = handleSubmit( async ({ name, email, password }) => {
   loading.value = false;
 });
 </script>
+
+<style scoped>
+  .logo {
+    text-align: center;
+    font-family: 'Pacifico', cursive;
+    font-size: 38px;
+    color: #F6416C;
+    cursor: pointer;
+  }
+</style>
