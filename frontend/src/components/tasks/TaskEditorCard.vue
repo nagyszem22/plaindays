@@ -44,7 +44,7 @@ const urgencyOptions = [
   { title: 'Tomorrow', value: 'TOMORROW' },
   { title: 'This week', value: 'THIS_WEEK' },
   { title: 'Next week', value: 'NEXT_WEEK' },
-  { title: 'At some point', value: 'NONE' },
+  { title: 'Whenever', value: 'NONE' },
 ];
 
 const scheduleType = ref('WORK_HOURS');
