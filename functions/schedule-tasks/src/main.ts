@@ -1,8 +1,9 @@
 import { Client, Databases, Account, Query } from 'node-appwrite';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime, Duration } from "luxon";
+import config from './config.js';
 // @ts-expect-error
-import { abd, abdc, appwriteEndpoint } from './config';
+const { abd, abdc, appwriteEndpoint } = config;
 
 export type Task = {
   id?: string
