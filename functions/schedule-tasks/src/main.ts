@@ -1,4 +1,4 @@
-import { Client, Databases, ID, Query } from 'node-appwrite';
+import { Client, Databases, Account, Query } from 'node-appwrite';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime, Duration } from "luxon";
 // @ts-expect-error
@@ -82,6 +82,7 @@ export default async ({ req, res, log, error }) => {
     return res.send('Please login');
   }
 
+  const account = new Account(client);
   const databases = new Databases(client);
   try {
     // @TODO add database and collection id to environment variables
@@ -89,6 +90,18 @@ export default async ({ req, res, log, error }) => {
     // if there is another task that is currenlty being processed, abort
 
     // @TODO: get the following user preferences: workHours, dayHours
+    const preferences: { dayStart?: number, dayEnd?: number, workStart?: number, workEnd?: number, timeZone?: string  } = await account.getPrefs();
+    const { dayStart, dayEnd, workStart, workEnd, timeZone } = preferences || {};
+
+    const workHours: WorkHours = {
+      start: workStart || DEFAULT_WORK_HOURS.start,
+      end: workEnd || DEFAULT_WORK_HOURS.end
+    };
+    const dayHours: DayHours = {
+      start: dayStart || DEFAULT_DAY_HOURS.start,
+      end: dayEnd || DEFAULT_DAY_HOURS.end
+    };
+    const tz: string = timeZone || DEFAULT_TIME_ZONE;
 
     // @TODO: validate tasks making sure that they can actually be scheduled and fit in the desired time slots
     // a task can not be longer then the duration of the slot it is scheduled for if it can not be split
@@ -148,7 +161,7 @@ export default async ({ req, res, log, error }) => {
       return task;
     }).filter(({ parentID }) => !parentID) : [];
 
-    const { create, update } = schedule(DEFAULT_WORK_HOURS, DEFAULT_DAY_HOURS, DEFAULT_TIME_ZONE, tasks);
+    const { create, update } = schedule(workHours, dayHours, tz, tasks);
     
     // delete all tasks that does have a parentID
     const documentsWithParentIDs: any[] = Array.isArray(collection?.documents) ? collection.documents.filter(({ parentID }: any) => parentID) : [];
