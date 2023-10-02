@@ -1,9 +1,7 @@
 import { Client, Databases, Account, Query } from 'node-appwrite';
 import { v4 as uuidv4 } from 'uuid';
 import { DateTime, Duration } from "luxon";
-import config from './config.js';
-// @ts-expect-error
-const { abd, abdc, appwriteEndpoint } = config;
+import  { appwriteEndpoint, adb, adbc } from './config.js';
 
 export type Task = {
   id?: string
@@ -107,7 +105,7 @@ export default async ({ req, res, log, error }) => {
     // @TODO: validate tasks making sure that they can actually be scheduled and fit in the desired time slots
     // a task can not be longer then the duration of the slot it is scheduled for if it can not be split
 
-    const collection = await databases.listDocuments(abd['App'], abdc['Events'], [
+    const collection = await databases.listDocuments(adb['App'], adbc['Events'], [
       Query.select(['$id', 'title', 'content', 'parentID', 'deadline', 'urgency', 'priority', 'scheduleType', 'duration', 'canSplit',
         'isSplit', 'isDone', 'userID', 'start', 'end']),
       Query.equal('isDone', [ false ]),
