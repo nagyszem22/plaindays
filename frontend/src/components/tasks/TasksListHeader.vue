@@ -112,7 +112,7 @@ watch(() => props.folder, () => {
 });
 
 const createFolder = () => {
-  const parentID = props.folder.id === 'ALL_TASKS' ? undefined : props.folder.id;
+  const parentID = props.folder.id === 'ALL_TASKS' ? null : props.folder.id;
   emit('create:folder', { name: newFolderName.value, id: uuidv4(), parentID });
   createFolderDialog.value = false;
 }

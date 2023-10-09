@@ -152,7 +152,6 @@ const loading = ref(false);
 const tasks = ref([]);
 
 onMounted(async () => {
-  console.log({ folderID: props.folderID });
   await getFolders();
   await getTasks();
 
@@ -336,7 +335,6 @@ const getFolders = async () => {
         };
       });
     }
-    console.log({ data, folders: folderList.value });
   } catch (error) {
     console.log({ error });
     notification.value = { show: true, text: 'Error getting folders', variant: 'error' };
