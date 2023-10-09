@@ -44,7 +44,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router';
 import { Account, ID } from 'appwrite';
 import { client } from './../config';
 import { useForm } from 'vee-validate';
@@ -98,7 +98,7 @@ const submit = handleSubmit( async ({ name, email, password }) => {
       workStart: 9,
       workEnd: 18,
       timeZone: Intl?.DateTimeFormat().resolvedOptions().timeZone || null,
-    })
+    });
     router.push({ name: 'OnboardingView' });
   } catch (error) {
     notification.value = { show: true, text: error.message, variant: 'error' };

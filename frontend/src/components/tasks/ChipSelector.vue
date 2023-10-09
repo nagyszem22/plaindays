@@ -1,9 +1,8 @@
 <template>
   <v-menu>
     <template v-slot:activator="{ props: active }">
-      <div class="d-inline-flex flex-column">
-        <small class="mb-1" style="color: #444; font-weight: 500;">{{ label }}</small>
-        <v-chip :class="customClass || null" v-bind="active" label>{{ title }}</v-chip>
+      <div :class="{ 'd-inline-flex': true, 'flex-column': true, ...(customClass|| {}) }">
+        <small v-bind="active" class="label">{{ title }}</small>
       </div>
     </template>
 
@@ -45,3 +44,21 @@ const selectOption = (option) => {
   emit('update:value', option.value);
 }
 </script>
+
+<style lang="scss" scoped>
+.label {
+  font-weight: 500;
+  cursor: pointer;
+  color: #999;
+
+  &:hover {
+    color: #666;
+  }
+
+  &:active {
+    position: relative;
+    color: #333;
+    top: 1px;
+  }
+}
+</style>

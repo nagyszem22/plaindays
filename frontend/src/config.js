@@ -18,7 +18,8 @@ client
 
   // appwrite collection ids
   const adbc = {
-    ['Events']: '6501cbe36f6bb2db7c6f'
+    ['Events']: '6501cbe36f6bb2db7c6f',
+    ['Folders']: '650300c5512bf91c6d2b'
   }
 
 export {

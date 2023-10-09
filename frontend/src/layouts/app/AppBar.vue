@@ -3,6 +3,21 @@
     <!-- Logo -->
     <div class="text-primary logo" @click="$router.push({ name: 'DashboardView' })">PlainDays</div>
 
+    <v-btn
+      class="ml-3"
+      size="small"
+      prepend-icon="mdi-checkbox-marked-circle-outline"
+      :active="$route.name === 'TasksView'"
+      @click="$router.push({ name: 'TasksView' })"
+    >Tasks</v-btn>
+    <v-btn
+      class="ml-3"
+      size="small"
+      prepend-icon="mdi-calendar-blank-outline"
+      :active="$route.name === 'DashboardView'"
+      @click="$router.push({ name: 'DashboardView' })"
+    >Calendar</v-btn>
+
     <!-- Spacer -->
     <v-spacer></v-spacer>
 
@@ -27,19 +42,9 @@
       </v-list>
     </v-menu>
 
-    <v-btn variant="flat" class="ml-0 mr-2" size="small" prepend-icon="mdi-plus" @click.stop="addTasksDrawer = !addTasksDrawer">Add Tasks</v-btn>
-    <v-btn variant="outlined" class="ml-0 mr-6" size="small" @click="refresh()"><v-icon icon="mdi-refresh"></v-icon></v-btn>
+    <v-btn variant="outlined" class="ml-0 mr-6" size="small" @click="refresh()"><v-icon icon="mdi-refresh"></v-icon> Schedule</v-btn>
 
   </v-app-bar>
-
-  <v-navigation-drawer
-    v-model="addTasksDrawer"
-    location="right"
-    width="500"
-    temporary
-  >
-    <upsert-multiple-tasks @close="addTasksDrawer = false" />
-  </v-navigation-drawer>
 
   <div v-if="!store?.account?.emailVerification && false" style="position: fixed; top: 60px; z-index: 1000;" class="w-100">
     <v-alert color="secondary" :icon="false">
@@ -80,11 +85,9 @@
   import { af } from '@/config';
   import { client } from '@/config';
   import { store } from '@/store';
-  import UpsertMultipleTasks from '@/components/tasks/UpsertMultipleTasks.vue';
 
   const notification = ref({ show: false, text: '', variant: 'success' });
   const loading = ref(false);
-  const addTasksDrawer = ref(false);
   const router = useRouter();
 
   const refresh = async () => {
@@ -136,5 +139,6 @@
     color: #F6416C;
     cursor: pointer;
     width: 150px;
+    border-right: 1px solid #f7f8fe;
   }
 </style>

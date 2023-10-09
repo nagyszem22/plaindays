@@ -41,6 +41,12 @@ const routes = [
         name: 'OnboardingView',
         component: () => import(/* webpackChunkName: "onboarding" */ '@/views/OnboardingView.vue'),
       },
+      {
+        path: '/app/tasks/:folderID?',
+        name: 'TasksView',
+        component: () => import(/* webpackChunkName: "tasks" */ '@/views/TasksView.vue'),
+        props: true,
+      },
     ],
   },
 ];

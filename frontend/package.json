@@ -23,6 +23,7 @@
     "vue-cal": "^4.8.1",
     "vue-confetti": "^2.3.0",
     "vue-confetti-explosion": "^1.0.2",
+    "vue-draggable-next": "^2.2.1",
     "vue-router": "^4.0.0",
     "vuetify": "^3.3.11",
     "webfontloader": "^1.0.0",
