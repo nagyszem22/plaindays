@@ -173,6 +173,7 @@ const addTask = async () => {
     priority: 2,
     duration: 1 * 60 * 60 * 1000,
     userID,
+    canSplit: false,
     folder: props.folderID ?? null,
   };
 
@@ -212,6 +213,7 @@ const updateTask = async (index, val) => {
   const { id, folderID, ...task } = val;
   const data = {
     ...task,
+    canSplit: false,
     folder: folderID ?? null,
   };
   try {
