@@ -67,7 +67,7 @@ const DEFAULT_DAY_HOURS: WorkHours = {
 };
 const DEFAULT_TIME_ZONE: string = 'Europe/London';
 
-export default async ({ req, res, log, error }) => {
+export default async ({ req, res, error }) => {
   const client = new Client()
     .setEndpoint(appwriteEndpoint)
     .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID);
@@ -212,7 +212,7 @@ export function schedule(workHours: WorkHours, dayHours: DayHours, timeZone: str
     const freeTimeSlots: TimeSlot[] = findFreeTimeSlots(scheduledTasks, timeZone, testDate);
 
     // schedule the current task and split it if necessary
-    const scheduledTask: Task = scheduleTask(workHours, dayHours, timeZone, freeTimeSlots, task);
+    const scheduledTask: Task = scheduleTask(workHours, dayHours, freeTimeSlots, task);
 
     // add the scheduled task to the scheduled tasks
     scheduledTasks.push(scheduledTask);
@@ -264,7 +264,7 @@ export function findFreeTimeSlots(scheduledTasks: Task[], timeZone: string, test
 // schedule the current task
 // returns an array of two tasks: the scheduled task and a remainder task
 // if no splitting is necessary, the remainder is undefined
-export function scheduleTask(workHours: WorkHours, dayHours: DayHours, timeZone: string, freeTimeSlots: TimeSlot[], task: Task): Task {
+export function scheduleTask(workHours: WorkHours, dayHours: DayHours, freeTimeSlots: TimeSlot[], task: Task): Task {
   const { duration: dur, scheduleType } = task;
   const duration: Duration = Duration.fromObject({ milliseconds: dur })
 
