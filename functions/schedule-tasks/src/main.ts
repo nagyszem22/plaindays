@@ -57,7 +57,6 @@ export type TimeSlot = {
   end?: DateTime
 }
 
-const MIN_SPLIT_DURATION: number = 0.5;
 const DEFAULT_WORK_HOURS: WorkHours = {
   start: 9,
   end: 18
