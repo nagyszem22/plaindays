@@ -18,15 +18,16 @@ export default async ({ req, res, error, log }) => {
     log(adb['App']);
     log(adbc['Events']);
 
-    const collection = await databases.listDocuments(adb['App'], adbc['Events'], [], 150);
+    const collection = await databases.listDocuments(adb['App'], adbc['Events'], [Query.limit(150)]);
 
-    log({ documents: collection.documents, length: collection.documents.length });
+    log({ length: collection.documents.length });
 
     for (let i = 0; i < collection.documents.length; i += 1) {
       const data = {
         scheduleType: collection.documents[i].scheduleType === 'BEFORE_WORK_HOURS' || collection.documents[i].scheduleType === 'AFTER_WORK_HOURS' ? 'OUTSIDE_WORK_HOURS' : collection.documents[i].scheduleType,
         folderID: collection.documents[i].folder ? collection.documents[i].folder.$id : null,
       };
+      log(i);
       log(data);
       log(collection.documents[i].$id);
       log('--- --- ---')
