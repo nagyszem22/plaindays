@@ -326,7 +326,7 @@ const getTasks = async () => {
       const folderIDs = [ props.folderID, ...findChildrenFolderIDs(props.folderID) ];
       const folderData = await databases.listDocuments(adb['App'], adbc['Events'], [
         Query.equal('folderID', folderIDs),
-        Query.orderDesc('start')
+        Query.orderAsc('start')
       ]);
       documents = folderData.documents;
     } else if (props.folderID === 'today') {
@@ -337,18 +337,18 @@ const getTasks = async () => {
       const data = await databases.listDocuments(adb['App'], adbc['Events'], [
         Query.greaterThan('start', today.toISOString()),
         Query.lessThan('start', tomorrow.toISOString()),
-        Query.orderDesc('start')
+        Query.orderAsc('start')
       ]);
       documents = data.documents;
     } else if (props.folderID === 'pinned') {
       const data = await databases.listDocuments(adb['App'], adbc['Events'], [
         Query.equal('isPinned', [ true ]),
-        Query.orderDesc('start')
+        Query.orderAsc('start')
       ]);
       documents = data.documents;
     } else {
       const data = await databases.listDocuments(adb['App'], adbc['Events'], [
-        Query.orderDesc('start')
+        Query.orderAsc('start')
       ]);
       documents = data.documents;
     }
