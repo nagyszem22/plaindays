@@ -1,7 +1,7 @@
 import { Client, Databases, Query } from 'node-appwrite';
 import  { appwriteEndpoint, adb, adbc } from './config.js';
 
-export default async ({ req, res, error }) => {
+export default async ({ req, res, error, log }) => {
   try {
     const client = new Client();
 
@@ -12,9 +12,13 @@ export default async ({ req, res, error }) => {
       .setProject(process.env.APPWRITE_FUNCTION_PROJECT_ID)
       .setKey(process.env.APPWRITE_API_KEY);
 
+    log(process.env.APPWRITE_FUNCTION_PROJECT_ID);
+
     const collection = await databases.listDocuments(adb['App'], adbc['Events'], [
       Query.select(['$id', 'scheduleType', 'folder' ]),
     ]);
+
+    log(collection.documents);
 
     const promises = [];
     (Array.isArray(collection?.documents) ? collection.documents : [])
