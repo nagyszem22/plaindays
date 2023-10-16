@@ -1,11 +1,12 @@
-import { Client, Databases, Query } from 'node-appwrite';
-import  { appwriteEndpoint, adb, adbc } from './config.js';
+const sdk = require('node-appwrite');
+const config = require('./config.js');
 
 export default async ({ req, res, error }) => {
   try {
-    const client = new Client();
+    const { appwriteEndpoint, adb, adbc } = config;
+    const client = new sdk.Client();
 
-    const databases = new Databases(client);
+    const databases = new sdk.Databases(client);
 
     client
       .setEndpoint(appwriteEndpoint)
