@@ -27,9 +27,9 @@ export default async ({ req, res, error }) => {
 
     await Promise.all(promises);
 
-    return res.empty();
-
   } catch (e) {
     error(e);
   }
+
+  return res.empty();
 }
