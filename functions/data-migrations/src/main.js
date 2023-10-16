@@ -30,6 +30,8 @@ export default async ({ req, res, error, log }) => {
           folderID: document.folder ? document.folder.$id : null,
         }));
       });
+    
+    log({ promises });
 
     await Promise.all(promises);
 
