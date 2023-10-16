@@ -231,11 +231,14 @@ export function findFreeTimeSlots(scheduledTasks: Task[], timeZone: string, test
   let end: DateTime = undefined;
   start = start.plus({ minutes: start.minute === 0 ? 0 : 5 - (start.minute % 5) }).set({ second: 0, millisecond: 0 });
 
-  const scheduledTasksCopy = [ ...scheduledTasks ];
+  const scheduledTasksCopy = [
+    ...scheduledTasks
+      .map(task => ({ ...task }))
+      .filter(item => item.start && item.end)
+      .sort((a, b) => (a.start && b.start ? a.start.toMillis() - b.start.toMillis() : 0))
+  ];
 
-  scheduledTasksCopy
-    .filter(item => item.start && item.end)
-    .sort((a, b) => (a.start && b.start ? a.start.toMillis() - b.start.toMillis() : 0));
+  // console.log('scheduledTasksCopy', scheduledTasksCopy.map(item => ({ start: item.start.toISO(), end: item.end.toISO() })));
 
   if (!scheduledTasksCopy || scheduledTasksCopy.length === 0) {
     return [{ start, end }];
@@ -305,6 +308,7 @@ export function scheduleTask(workHours: WorkHours, dayHours: DayHours, freeTimeS
       });
 
       // if weekend
+      // CONTINUE HERE!!! FIGURE OUT WHY ISN'T THIS WORKING BY WRITING TESTS
       if (today.weekday > 5) {
         if (scheduleType === ScheduleType.WORK_HOURS) {
           continue;
@@ -312,7 +316,6 @@ export function scheduleTask(workHours: WorkHours, dayHours: DayHours, freeTimeS
 
         slotStart = startDay > slot.start ? startDay : slot.start;
         slotEnd = !slot.end || endDay < slot.end ? endDay : slot.end;
-
 
       // if weekday
       } else {

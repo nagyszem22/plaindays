@@ -115,20 +115,17 @@ describe('scheduleTask', function() {
     const dayHours = { start: 8, end: 22 };
     const task = getTask({});
 
-    const expectedOutput = [
-      getTask({
-        start: new Date('2021-09-30T09:00:00.000+01:00'),
-        end: new Date('2021-09-30T09:30:00.000+01:00'),
-      }),
-      null
-    ];
+    const expectedOutput = getTask({
+      start: new Date('2021-09-30T09:00:00.000+01:00'),
+      end: new Date('2021-09-30T09:30:00.000+01:00'),
+    });
 
-    const output = scheduleTask(workHours, dayHours, DEFAULT_TIME_ZONE, freeTimeSlots, task);
+    const output = scheduleTask(workHours, dayHours, freeTimeSlots, task);
 
     expect(output).to.deep.equal(expectedOutput);
   });
 
-  it('should schedule a 30 minutes before work task if only one free timeslot', function() {
+  it('should schedule a 30 minutes outside work hours task if only one free timeslot', function() {
     const start = DateTime.fromISO('2021-09-30T01:00:00.000+01:00', { zone: DEFAULT_TIME_ZONE });
     const freeTimeSlots = [{
       start: start,
@@ -137,85 +134,16 @@ describe('scheduleTask', function() {
     const workHours = { start: 9, end: 18 };
     const dayHours = { start: 8, end: 22 };
     const task = getTask({
-      scheduleType: ScheduleType.BEFORE_WORK_HOURS
+      scheduleType: ScheduleType.OUTSIDE_WORK_HOURS
     });
 
-    const expectedOutput = [
-      getTask({
-        start: new Date('2021-09-30T08:00:00.000+01:00'),
-        end: new Date('2021-09-30T08:30:00.000+01:00'),
-        scheduleType: ScheduleType.BEFORE_WORK_HOURS
-      }),
-      null
-    ];
-
-    const output = scheduleTask(workHours, dayHours, DEFAULT_TIME_ZONE, freeTimeSlots, task);
-
-    expect(output).to.deep.equal(expectedOutput);
-  });
-
-  it('should schedule a 30 minutes after work task if only one free timeslot', function() {
-    const start = DateTime.fromISO('2021-09-30T01:00:00.000+01:00', { zone: DEFAULT_TIME_ZONE });
-    const freeTimeSlots = [{
-      start: start,
-      end: undefined
-    }];
-    const workHours = { start: 9, end: 18 };
-    const dayHours = { start: 8, end: 22 };
-    const task = getTask({
-      scheduleType: ScheduleType.AFTER_WORK_HOURS
+    const expectedOutput = getTask({
+      start: new Date('2021-09-30T08:00:00.000+01:00'),
+      end: new Date('2021-09-30T08:30:00.000+01:00'),
+      scheduleType: ScheduleType.OUTSIDE_WORK_HOURS
     });
 
-    const expectedOutput = [
-      getTask({
-        start: new Date('2021-09-30T18:00:00.000+01:00'),
-        end: new Date('2021-09-30T18:30:00.000+01:00'),
-        scheduleType: ScheduleType.AFTER_WORK_HOURS
-      }),
-      null
-    ];
-
-    const output = scheduleTask(workHours, dayHours, DEFAULT_TIME_ZONE, freeTimeSlots, task);
-
-    expect(output).to.deep.equal(expectedOutput);
-  });
-
-  it('should split a task', function() {
-    const start = DateTime.fromISO('2021-09-30T01:00:00.000+01:00', { zone: DEFAULT_TIME_ZONE });
-    const freeTimeSlots = [{
-      start: start,
-      end: DateTime.fromISO('2021-09-30T10:00:00.000+01:00', { zone: DEFAULT_TIME_ZONE })
-    }, {
-      start: DateTime.fromISO('2021-09-30T15:00:00.000+01:00', { zone: DEFAULT_TIME_ZONE }),
-      end: undefined
-    }];
-    const workHours = { start: 9, end: 18 };
-    const dayHours = { start: 8, end: 22 };
-    const task = getTask({
-      scheduleType: ScheduleType.WORK_HOURS,
-      duration: 4 * 60 * 60 * 1000
-    });
-
-    const output = scheduleTask(workHours, dayHours, DEFAULT_TIME_ZONE, freeTimeSlots, task);
-
-    expect(output).to.have.lengthOf(2);
-
-    const expectedOutput = [
-      getTask({
-        id: output[0].id,
-        start: new Date('2021-09-30T09:00:00.000+01:00'),
-        end: new Date('2021-09-30T10:00:00.000+01:00'),
-        duration: 1 * 60 * 60 * 1000,
-        scheduleType: ScheduleType.WORK_HOURS,
-        parentID: task.id,
-      }),
-      {
-        ...task,
-        id: output[1].id,
-        duration: 3 * 60 * 60 * 1000,
-        parentID: task.id,
-      }
-    ];
+    const output = scheduleTask(workHours, dayHours, freeTimeSlots, task);
 
     expect(output).to.deep.equal(expectedOutput);
   });
@@ -243,52 +171,14 @@ describe('scheduleTask', function() {
       canSplit: false
     });
 
-    const output = scheduleTask(workHours, dayHours, DEFAULT_TIME_ZONE, freeTimeSlots, task);
+    const output = scheduleTask(workHours, dayHours, freeTimeSlots, task);
 
-    const expectedOutput = [
-      getTask({
-        start: new Date('2021-10-01T15:00:00.000+01:00'),
-        end: new Date('2021-10-01T17:00:00.000+01:00'),
-        duration: 2 * 60 * 60 * 1000,
-        canSplit: false
-      }),
-      null
-    ];
-
-    expect(output).to.deep.equal(expectedOutput);
-  });
-
-  it('should schedule a task that is longer than a day', function() {
-    const start = DateTime.fromISO('2021-09-30T01:00:00.000+01:00', { zone: DEFAULT_TIME_ZONE });
-    const freeTimeSlots = [{
-      start: start,
-      end: undefined
-    }];
-    const workHours = { start: 9, end: 18 };
-    const dayHours = { start: 8, end: 22 };
-    const task = getTask({
-      scheduleType: ScheduleType.WORK_HOURS,
-      duration: 10.5 * 60 * 60 * 1000
+    const expectedOutput = getTask({
+      start: new Date('2021-10-01T15:00:00.000+01:00'),
+      end: new Date('2021-10-01T17:00:00.000+01:00'),
+      duration: 2 * 60 * 60 * 1000,
+      canSplit: false
     });
-
-    const output = scheduleTask(workHours, dayHours, DEFAULT_TIME_ZONE, freeTimeSlots, task);
-
-    const expectedOutput = [
-      getTask({
-        id: output[0].id,
-        start: new Date('2021-09-30T09:00:00.000+01:00'),
-        end: new Date('2021-09-30T18:00:00.000+01:00'),
-        duration: 9 * 60 * 60 * 1000,
-        scheduleType: ScheduleType.WORK_HOURS,
-        parentID: task.id,
-      }),
-      {
-        ...task,
-        id: output[1].id,
-        duration: 1.5 * 60 * 60 * 1000,
-        parentID: task.id,
-      }
-    ];
 
     expect(output).to.deep.equal(expectedOutput);
   });
@@ -312,69 +202,66 @@ describe('schedule', function() {
 
     const output = schedule(workHours, dayHours, DEFAULT_TIME_ZONE, tasks, start);
 
-    expect(output.update).to.have.lengthOf(8);
+    expect(output).to.have.lengthOf(8);
 
-    const expectedOutput = {
-      create: [],
-      update: [
-        getTask({
-          id: output.update[0].id,
-          start: new Date('2021-09-30T09:00:00.000+01:00'),
-          end: new Date('2021-09-30T11:00:00.000+01:00'),
-          duration: 2 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[1].id,
-          start: new Date('2021-09-30T11:00:00.000+01:00'),
-          end: new Date('2021-09-30T14:00:00.000+01:00'),
-          duration: 3 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[2].id,
-          start: new Date('2021-09-30T14:00:00.000+01:00'),
-          end: new Date('2021-09-30T16:00:00.000+01:00'),
-          duration: 2 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[3].id,
-          start: new Date('2021-09-30T16:00:00.000+01:00'),
-          end: new Date('2021-09-30T17:30:00.000+01:00'),
-          duration: 1.5 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[4].id,
-          start: new Date('2021-09-30T17:30:00.000+01:00'),
-          end: new Date('2021-09-30T18:00:00.000+01:00'),
-          duration: 30 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[5].id,
-          start: new Date('2021-10-01T09:00:00.000+01:00'),
-          end: new Date('2021-10-01T09:45:00.000+01:00'),
-          duration: 45 * 60 * 1000,
-          deadline: new Date('2021-10-01T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[6].id,
-          start: new Date('2021-10-01T09:45:00.000+01:00'),
-          end: new Date('2021-10-01T10:15:00.000+01:00'),
-          duration: 30 * 60 * 1000,
-          deadline: new Date('2021-10-01T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[7].id,
-          start: new Date('2021-10-01T10:15:00.000+01:00'),
-          end: new Date('2021-10-01T11:45:00.000+01:00'),
-          duration: 1.5 * 60 * 60 * 1000,
-          deadline: new Date('2021-10-01T00:00:00.000+01:00')
-        }),
-      ],
-    };
+    const expectedOutput = [
+      getTask({
+        id: output[0].id,
+        start: new Date('2021-09-30T09:00:00.000+01:00'),
+        end: new Date('2021-09-30T11:00:00.000+01:00'),
+        duration: 2 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[1].id,
+        start: new Date('2021-09-30T11:00:00.000+01:00'),
+        end: new Date('2021-09-30T14:00:00.000+01:00'),
+        duration: 3 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[2].id,
+        start: new Date('2021-09-30T14:00:00.000+01:00'),
+        end: new Date('2021-09-30T16:00:00.000+01:00'),
+        duration: 2 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[3].id,
+        start: new Date('2021-09-30T16:00:00.000+01:00'),
+        end: new Date('2021-09-30T17:30:00.000+01:00'),
+        duration: 1.5 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[4].id,
+        start: new Date('2021-09-30T17:30:00.000+01:00'),
+        end: new Date('2021-09-30T18:00:00.000+01:00'),
+        duration: 30 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[5].id,
+        start: new Date('2021-10-01T09:00:00.000+01:00'),
+        end: new Date('2021-10-01T09:45:00.000+01:00'),
+        duration: 45 * 60 * 1000,
+        deadline: new Date('2021-10-01T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[6].id,
+        start: new Date('2021-10-01T09:45:00.000+01:00'),
+        end: new Date('2021-10-01T10:15:00.000+01:00'),
+        duration: 30 * 60 * 1000,
+        deadline: new Date('2021-10-01T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[7].id,
+        start: new Date('2021-10-01T10:15:00.000+01:00'),
+        end: new Date('2021-10-01T11:45:00.000+01:00'),
+        duration: 1.5 * 60 * 60 * 1000,
+        deadline: new Date('2021-10-01T00:00:00.000+01:00')
+      }),
+    ];
 
     expect(output).to.deep.equal(expectedOutput);
   });
@@ -384,135 +271,57 @@ describe('schedule', function() {
     const workHours = { start: 9, end: 18 };
     const dayHours = { start: 8, end: 22 };
     const tasks = getTasks([
-      { duration: 30 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00'), scheduleType: ScheduleType.BEFORE_WORK_HOURS },
+      { duration: 30 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00'), scheduleType: ScheduleType.OUTSIDE_WORK_HOURS },
       { duration: 1.5 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00') },
       { duration: 1 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00') },
       { duration: 4.5 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00') },
-      { duration: 1 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00'), scheduleType: ScheduleType.AFTER_WORK_HOURS },
+      { duration: 1 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00'), scheduleType: ScheduleType.OUTSIDE_WORK_HOURS },
     ]);
 
     const output = schedule(workHours, dayHours, DEFAULT_TIME_ZONE, tasks, start);
 
-    expect(output.update).to.have.lengthOf(5);
-    output.update.sort((a, b) => (a.start && b.start ? a.start.toMillis() - b.start.toMillis() : 0));
+    expect(output).to.have.lengthOf(5);
+    output.sort((a, b) => (a.start && b.start ? a.start.toMillis() - b.start.toMillis() : 0));
 
-    const expectedOutput = {
-      create: [],
-      update: [
-        getTask({
-          id: output.update[0].id,
-          start: new Date('2021-09-30T08:00:00.000+01:00'),
-          end: new Date('2021-09-30T08:30:00.000+01:00'),
-          duration: 30 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00'),
-          scheduleType: ScheduleType.BEFORE_WORK_HOURS
-        }),
-        getTask({
-          id: output.update[1].id,
-          start: new Date('2021-09-30T09:00:00.000+01:00'),
-          end: new Date('2021-09-30T13:30:00.000+01:00'),
-          duration: 4.5 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[2].id,
-          start: new Date('2021-09-30T13:30:00.000+01:00'),
-          end: new Date('2021-09-30T14:30:00.000+01:00'),
-          duration: 1 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[3].id,
-          start: new Date('2021-09-30T14:30:00.000+01:00'),
-          end: new Date('2021-09-30T16:00:00.000+01:00'),
-          duration: 1.5 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[4].id,
-          start: new Date('2021-09-30T18:00:00.000+01:00'),
-          end: new Date('2021-09-30T19:00:00.000+01:00'),
-          duration: 1 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00'),
-          scheduleType: ScheduleType.AFTER_WORK_HOURS
-        }),
-      ],
-    };
-
-    expect(output).to.deep.equal(expectedOutput);
-  });
-
-  it('should split a task longer than a day', function() {
-    const start = new Date('2021-09-30T00:00:00.000+01:00');
-    const workHours = { start: 9, end: 18 };
-    const dayHours = { start: 8, end: 22 };
-    const tasks = getTasks([
-      { duration: 30 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00'), scheduleType: ScheduleType.BEFORE_WORK_HOURS },
-      { duration: 10.5 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00') },
-      { duration: 1 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00') },
-      { duration: 4.5 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00') },
-      { duration: 1 * 60 * 60 * 1000, deadline: new Date('2021-09-30T00:00:00.000+01:00'), scheduleType: ScheduleType.AFTER_WORK_HOURS },
-    ]);
-
-    const output = schedule(workHours, dayHours, DEFAULT_TIME_ZONE, tasks, start);
-
-    expect(output.update).to.have.lengthOf(4);
-    expect(output.create).to.have.lengthOf(2);
-    output.update.sort((a, b) => (a.start && b.start ? a.start.toMillis() - b.start.toMillis() : 0));
-    output.create.sort((a, b) => (a.start && b.start ? a.start.toMillis() - b.start.toMillis() : 0));
-
-    const expectedOutput = {
-      create: [
-        getTask({
-          id: output.create[0].id,
-          start: new Date('2021-09-30T14:30:00.000+01:00'),
-          end: new Date('2021-09-30T18:00:00.000+01:00'),
-          duration: 3.5 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00'),
-          parentID: 'test_id_1'
-        }),
-        getTask({
-          id: output.create[1].id,
-          start: new Date('2021-10-01T09:00:00.000+01:00'),
-          end: new Date('2021-10-01T16:00:00.000+01:00'),
-          duration: 7 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00'),
-          parentID: 'test_id_1'
-        })
-      ],
-      update: [
-        getTask({
-          id: output.update[0].id,
-          start: new Date('2021-09-30T08:00:00.000+01:00'),
-          end: new Date('2021-09-30T08:30:00.000+01:00'),
-          duration: 30 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00'),
-          scheduleType: ScheduleType.BEFORE_WORK_HOURS
-        }),
-        getTask({
-          id: output.update[1].id,
-          start: new Date('2021-09-30T09:00:00.000+01:00'),
-          end: new Date('2021-09-30T13:30:00.000+01:00'),
-          duration: 4.5 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[2].id,
-          start: new Date('2021-09-30T13:30:00.000+01:00'),
-          end: new Date('2021-09-30T14:30:00.000+01:00'),
-          duration: 1 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00')
-        }),
-        getTask({
-          id: output.update[3].id,
-          start: new Date('2021-09-30T18:00:00.000+01:00'),
-          end: new Date('2021-09-30T19:00:00.000+01:00'),
-          duration: 1 * 60 * 60 * 1000,
-          deadline: new Date('2021-09-30T00:00:00.000+01:00'),
-          scheduleType: ScheduleType.AFTER_WORK_HOURS
-        })
-      ],
-    };
+    const expectedOutput = [
+      getTask({
+        id: output[0].id,
+        start: new Date('2021-09-30T08:00:00.000+01:00'),
+        end: new Date('2021-09-30T09:00:00.000+01:00'),
+        duration: 1 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00'),
+        scheduleType: ScheduleType.OUTSIDE_WORK_HOURS
+      }),
+      getTask({
+        id: output[1].id,
+        start: new Date('2021-09-30T09:00:00.000+01:00'),
+        end: new Date('2021-09-30T13:30:00.000+01:00'),
+        duration: 4.5 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[2].id,
+        start: new Date('2021-09-30T13:30:00.000+01:00'),
+        end: new Date('2021-09-30T14:30:00.000+01:00'),
+        duration: 1 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[3].id,
+        start: new Date('2021-09-30T14:30:00.000+01:00'),
+        end: new Date('2021-09-30T16:00:00.000+01:00'),
+        duration: 1.5 * 60 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00')
+      }),
+      getTask({
+        id: output[4].id,
+        start: new Date('2021-09-30T18:00:00.000+01:00'),
+        end: new Date('2021-09-30T18:30:00.000+01:00'),
+        duration: 30 * 60 * 1000,
+        deadline: new Date('2021-09-30T00:00:00.000+01:00'),
+        scheduleType: ScheduleType.OUTSIDE_WORK_HOURS
+      }),
+    ];
 
     expect(output).to.deep.equal(expectedOutput);
   });
