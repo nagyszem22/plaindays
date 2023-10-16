@@ -22,7 +22,7 @@ export default async ({ req, res, error, log }) => {
       Query.select(['$id', 'scheduleType', 'folder' ]),
     ]);
 
-    log(collection.documents);
+    log({ collection });
 
     const promises = [];
     (Array.isArray(collection?.documents) ? collection.documents : [])
