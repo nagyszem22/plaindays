@@ -20,7 +20,7 @@ export default async ({ req, res, error, log }) => {
 
     const collection = await databases.listDocuments(adb['App'], adbc['Events']);
 
-    log({ collection });
+    log({ documents: collection.documents, length: collection.documents.length });
 
     const promises = [];
     (Array.isArray(collection?.documents) ? collection.documents : [])
