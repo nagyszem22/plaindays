@@ -24,7 +24,7 @@ export default async ({ req, res, error, log }) => {
 
     for (let i = 0; i < collection.documents.length; i += 1) {
       const data = {
-        scheduleType: collection.documents[i].scheduleType === 'BEFORE_WORK_HOURS' || collection.documents[i].scheduleType === 'AFTER_WORK_HOURS' ? 'OUTSIDE_WORK_HOURS' : collection.documents[i].scheduleType,
+        scheduleType: collection.documents[i].scheduleType === 'BEFORE_WORK_HOURS' || collection.documents[i].scheduleType === 'AFTER_WORK_HOURS' ? 'OUTSIDE_WORK' : collection.documents[i].scheduleType,
         folderID: collection.documents[i].folder ? collection.documents[i].folder.$id : null,
       };
       log(i);
