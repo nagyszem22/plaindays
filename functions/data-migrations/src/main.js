@@ -18,7 +18,7 @@ export default async ({ req, res, error, log }) => {
     log(adb['App']);
     log(adbc['Events']);
 
-    const collection = await databases.listDocuments(adb['App'], adbc['Events']);
+    const collection = await databases.listDocuments(adb['App'], adbc['Events'], [], 150);
 
     log({ documents: collection.documents, length: collection.documents.length });
 
