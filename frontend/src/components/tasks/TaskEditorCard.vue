@@ -22,8 +22,10 @@
           single-line
           hide-details
         ></v-text-field>
-        <div v-if="canDelete" class="delete-btn">
-          <small @click="emit('delete', value)"><v-icon icon="mdi-delete-outline"></v-icon></small>
+        <div class="d-flex">
+          <div v-if="canDelete" class="delete-btn">
+            <small @click="emit('delete', value)"><v-icon icon="mdi-delete-outline"></v-icon></small>
+          </div>
         </div>
       </div>
       
@@ -37,6 +39,9 @@
           <chip-folder-selector label="Folder" :customClass="{ 'rounded-e-0': true, 'pr-3': true }" v-model:value="folderID" :folders="folders" />
           <chip-selector label="Est." :customClass="{ 'rounded-e-0': true, 'pr-1': true }" v-model:value="hours" :options="hoursOptions" />
           <chip-selector label="Time" :customClass="{ 'rounded-s-0': true, 'pl-1': true, 'mr-2': canDelete }" v-model:value="minutes" :options="minutesOptions" />
+          <div class="delete-btn">
+            <small @click="isPinned = !isPinned"><v-icon :icon="isPinned ? 'mdi-pin' : 'mdi-pin-outline'"></v-icon></small>
+          </div>
         </div>
       </div>
     </v-list-item>
@@ -54,6 +59,7 @@ const emit = defineEmits([ 'update:value', 'delete' ]);
 
 const title = ref('');
 const isDone = ref(false);
+const isPinned = ref(false);
 
 const urgency = ref('TODAY');
 const urgencyOptions = [
@@ -67,8 +73,8 @@ const urgencyOptions = [
 const scheduleType = ref('WORK_HOURS');
 const scheduleTypeOptions = [
   { title: '💼 During Work', value: 'WORK_HOURS' },
-  { title: '🌅 Before Work', value: 'BEFORE_WORK_HOURS' },
-  { title: '🌝 After Work', value: 'AFTER_WORK_HOURS' },
+  { title: '🌝 Outside Work', value: 'OUTSIDE_WORK' },
+  { title: '🍸 Weekend', value: 'WEEKEND' },
   { title: '🕰 Anytime', value: 'NONE' },
 ];
 
@@ -89,6 +95,7 @@ const minutesOptions = [0,5,10,15,20,25,30,35,40,45,50,55].map(num => ({ title: 
 onBeforeMount(() => {
   title.value = props.value?.title || '';
   isDone.value = props.value?.isDone || false;
+  isPinned.value = props.value?.isPinned || false;
   urgency.value = props.value?.urgency || 'TODAY';
   scheduleType.value = props.value?.scheduleType || 'WORK_HOURS';
   priority.value = props.value?.priority || 2;
@@ -103,6 +110,7 @@ onBeforeMount(() => {
   watch(hours, () => input());
   watch(minutes, () => input());
   watch(isDone, () => input());
+  watch(isPinned, () => input());
   watch(folderID, () => input());
 });
 
@@ -116,6 +124,7 @@ const input = () => {
   const data = {
     id: props.value?.id,
     isDone: isDone.value,
+    isPinned: isPinned.value,
     title: title.value,
     priority: priority.value,
     duration: (hours.value * 60 + minutes.value) * 60 * 1000,
@@ -160,7 +169,8 @@ const input = () => {
 
 <style lang="scss" scoped>
 .delete-btn {
-  width: 40px;
+  display: inline-block;
+  width: 30px;
   text-align: right;
   cursor: pointer;
   color: #999;

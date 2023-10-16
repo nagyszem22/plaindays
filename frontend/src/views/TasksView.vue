@@ -18,7 +18,13 @@
       <v-divider></v-divider>
       <v-list dense density="compact" nav>
         <v-list-item class="list-item" @click="$router.push({ name: 'TasksView' })" :active="!$route.params.folderID">
-          <v-icon class="mr-2 folder-icon" color="secondary" icon="mdi-folder-outline" /> All Tasks
+          <v-icon class="mr-2 folder-icon" color="secondary" icon="mdi-checkbox-multiple-marked-circle-outline" /> All Tasks
+        </v-list-item>
+        <v-list-item class="list-item" @click="$router.push({ name: 'TasksView', params: { folderID: 'pinned' } })" :active="$route.params.folderID === 'pinned'">
+          <v-icon class="mr-2 folder-icon" color="secondary" icon="mdi-pin-outline" /> Pinned Tasks
+        </v-list-item>
+        <v-list-item class="list-item" @click="$router.push({ name: 'TasksView', params: { folderID: 'today' } })" :active="$route.params.folderID === 'today'">
+          <v-icon class="mr-2 folder-icon" color="secondary" icon="mdi-calendar-today-outline" /> Today's Tasks
         </v-list-item>
       </v-list>
       <v-divider></v-divider>
@@ -27,16 +33,23 @@
       </v-list>
     </template>
   </v-navigation-drawer>
-  <v-row v-if="folder">
+  <v-row v-if="folder || folderID === 'pinned' || folderID === 'today'">
     <v-col cols="12" md="10" offset-md="1">
       <tasks-list-header
+        v-if="folder"
         :folder="folder"
         @create:folder="item => addFolder(item)"
         @update:folder="item => updateFolder(item)"
         @delete:folder="item => deleteFolder(item)"
       />
       <div class="pt-7 pl-6 pr-6 d-flex justify-space-between">
-        <v-btn size="small" variant="outlined" color="primary" @click="addTask">Add Task</v-btn>
+        <v-btn
+          size="small"
+          variant="outlined"
+          color="primary"
+          @click="addTask"
+          :disabled="folderID === 'pinned' || folderID === 'today'"
+        >Add Task</v-btn>
         <div>
           <v-switch
             color="primary"
@@ -96,7 +109,7 @@
 import TaskEditorCard from '@/components/tasks/TaskEditorCard.vue';
 import { ref, defineProps, computed, watch } from 'vue';
 import { useRouter } from 'vue-router';
-import { Databases } from 'appwrite';
+import { Databases, Query } from 'appwrite';
 import { v4 as uuidv4 } from 'uuid';
 import { client, adb, adbc } from '@/config';
 import { store } from '@/store';
@@ -105,10 +118,6 @@ import FolderItem from '@/components/tasks/FolderItem.vue';
 import TasksListHeader from '@/components/tasks/TasksListHeader.vue';
 
 // @TODO refactor it slightly
-// assign task to folder
-// make left navigation work
-// diplsay folder on tasks
-// edit folder on tasks
 // move all logic into composables
 
 const props = defineProps([ 'folderID' ]);
@@ -121,7 +130,6 @@ const displayFinishedTasks = ref(true);
 const folder = computed(() => {
   const defaultFolder = { id: 'ALL_TASKS', name: 'All Tasks', folders: folders.value };
   if (!props.folderID) return defaultFolder;
-  console.log({ folderID: props.folderID, folderList: folderList.value });
   const hit = folderList.value.find(({ id }) => id === props.folderID);
   if (!hit) return null;
   const children = folderList.value.filter(({ parentID }) => parentID === hit.id);
@@ -175,10 +183,11 @@ const addTask = async () => {
     userID,
     canSplit: false,
     folder: props.folderID ?? null,
+    folderID: props.folderID ?? null,
   };
 
   tasks.value = [
-    { ...task, id, folderID: task.folder, folder: undefined },
+    { ...task, id, folderID: task.folderID, folder: undefined },
     ...tasks.value,
   ];
 
@@ -209,12 +218,20 @@ const addFolder = async data => {
 }
 
 const updateTask = async (index, val) => {
+  let doneAt = undefined;
+  if (val.isDone && !tasks.value[index].isDone) {
+    doneAt = new Date();
+  } else if (!val.isDone && tasks.value[index].isDone) {
+    doneAt = null;
+  }
   tasks.value[index] = val;
   const { id, folderID, ...task } = val;
   const data = {
     ...task,
     canSplit: false,
     folder: folderID ?? null,
+    folderID: folderID ?? null,
+    doneAt
   };
   try {
     await databases.updateDocument(adb['App'], adbc['Events'], id, data);
@@ -292,14 +309,47 @@ const deleteFolder = async data => {
   router.push({ name: 'TasksView', params: { folderID: data.parentID ?? undefined } });
 }
 
+const findChildrenFolderIDs = parentID => {
+  return folderList.value.reduce((acc, folder) => {
+    if (folder.parentID === parentID) {
+      acc.push(folder.id);
+      acc.push(...findChildrenFolderIDs(folder.id));
+    }
+    return acc;
+  }, []);
+}
+
 const getTasks = async () => {
   try {
     let documents = null;
-    if (props.folderID) {
-      const folderData = await databases.getDocument(adb['App'], adbc['Folders'], props.folderID);
-      documents = folderData?.events;
+    if (props.folderID && props.folderID !== 'today' && props.folderID !== 'pinned') {
+      const folderIDs = [ props.folderID, ...findChildrenFolderIDs(props.folderID) ];
+      const folderData = await databases.listDocuments(adb['App'], adbc['Events'], [
+        Query.equal('folderID', folderIDs),
+        Query.orderDesc('start')
+      ]);
+      documents = folderData.documents;
+    } else if (props.folderID === 'today') {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const tomorrow = new Date(today);
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const data = await databases.listDocuments(adb['App'], adbc['Events'], [
+        Query.greaterThan('start', today.toISOString()),
+        Query.lessThan('start', tomorrow.toISOString()),
+        Query.orderDesc('start')
+      ]);
+      documents = data.documents;
+    } else if (props.folderID === 'pinned') {
+      const data = await databases.listDocuments(adb['App'], adbc['Events'], [
+        Query.equal('isPinned', [ true ]),
+        Query.orderDesc('start')
+      ]);
+      documents = data.documents;
     } else {
-      const data = await databases.listDocuments(adb['App'], adbc['Events']);
+      const data = await databases.listDocuments(adb['App'], adbc['Events'], [
+        Query.orderDesc('start')
+      ]);
       documents = data.documents;
     }
     if (Array.isArray(documents) && documents.length) {
@@ -311,8 +361,7 @@ const getTasks = async () => {
           id: $id,
           start: start ? new Date(start) : null,
           end: end ? new Date(end) : null,
-          content: undefined,
-          folderID: folder?.$id ?? props.folderID ?? null
+          content: undefined
         };
       });
     } else {
