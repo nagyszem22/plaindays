@@ -25,9 +25,9 @@ export default async ({ req, res, error }) => {
         }));
       });
 
-    const results = await Promise.all(promises);
+    await Promise.all(promises);
 
-    res.json(results);
+    return context.res.empty();
 
   } catch (e) {
     error(e);
