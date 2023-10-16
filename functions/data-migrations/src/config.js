@@ -1,17 +1,17 @@
 // appwrite client
-exports.appwriteEndpoint = 'https://cloud.appwrite.io/v1';
+export const appwriteEndpoint = 'https://cloud.appwrite.io/v1';
 
 // appwrite function ids
-exports.af = {
+export const af = {
   ['schedule-tasks']: '650d7f4fa106f174d42f'
 };
 
 // appwrite database ids
-exports.adb = {
+export const adb = {
   ['App']: '64d2c0765d92b052b3e0'
 }
 
 // appwrite collection ids
-exports.adbc = {
+export const adbc = {
   ['Events']: '6501cbe36f6bb2db7c6f'
 }
