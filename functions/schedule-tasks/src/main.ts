@@ -161,6 +161,8 @@ function mapDocumentToTask(document: any): Task {
       switch (document.scheduleType) {
         case 'WORK_HOURS':
           return ScheduleType.WORK_HOURS;
+        case 'OUTSIDE_WORK':
+          return ScheduleType.OUTSIDE_WORK_HOURS;
         case 'OUTSIDE_WORK_HOURS':
           return ScheduleType.OUTSIDE_WORK_HOURS;
         case 'BEFORE_WORK_HOURS':
