@@ -1,4 +1,5 @@
 import 'mocha';
+// @ts-expect-error
 import { expect } from 'chai';
 // @ts-expect-error
 import { findFreeTimeSlots, scheduleTask, schedule, ScheduleType } from '../src/main.ts';

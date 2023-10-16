@@ -1,18 +1,6 @@
 import { Client, Databases, Query } from 'node-appwrite';
 import  { appwriteEndpoint, adb, adbc } from './config.js';
 
-export type Task = {
-  id?: string
-  scheduleType: ScheduleType
-}
-
-export enum ScheduleType {
-  WORK_HOURS,
-  OUTSIDE_WORK_HOURS,
-  WEEKEND,
-  NONE
-}
-
 export default async ({ req, res, error }) => {
   try {
     const client = new Client();
@@ -30,7 +18,7 @@ export default async ({ req, res, error }) => {
 
     const promises = [];
     (Array.isArray(collection?.documents) ? collection.documents : [])
-      .forEach((document: any) => {
+      .forEach((document) => {
         promises.push(databases.updateDocument(adb['App'], adbc['Events'], document.$id, {
           scheduleType: document.scheduleType === 'BEFORE_WORK_HOURS' || document.scheduleType === 'AFTER_WORK_HOURS' ? 'OUTSIDE_WORK_HOURS' : document.scheduleType,
           folderID: document.folder ? document.folder.$id : null,
