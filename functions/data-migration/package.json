@@ -1,0 +1,22 @@
+{
+  "name": "starter-template",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "format": "prettier --write .",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "test": "ts-mocha -p tsconfig.json tests/**/*.test.ts",
+    "coverage": "nyc -r lcov -e .ts -x \"*.test.ts\" npm run test"
+  },
+  "dependencies": {
+    "node-appwrite": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.6.3",
+    "prettier": "^3.0.0",
+    "typescript": "^5.2.2"
+  }
+}
