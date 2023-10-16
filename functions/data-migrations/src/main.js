@@ -22,19 +22,16 @@ export default async ({ req, res, error, log }) => {
 
     log({ documents: collection.documents, length: collection.documents.length });
 
-    const promises = [];
-    (Array.isArray(collection?.documents) ? collection.documents : [])
-      .forEach((document) => {
-        promises.push(databases.updateDocument(adb['App'], adbc['Events'], document.$id, {
-          scheduleType: document.scheduleType === 'BEFORE_WORK_HOURS' || document.scheduleType === 'AFTER_WORK_HOURS' ? 'OUTSIDE_WORK_HOURS' : document.scheduleType,
-          folderID: document.folder ? document.folder.$id : null,
-        }));
-      });
-    
-    log({ promises });
-
-    await Promise.all(promises);
-
+    for (let i = 0; i < collection.documents.length; i += 1) {
+      const data = {
+        scheduleType: collection.documents[i].scheduleType === 'BEFORE_WORK_HOURS' || collection.documents[i].scheduleType === 'AFTER_WORK_HOURS' ? 'OUTSIDE_WORK_HOURS' : collection.documents[i].scheduleType,
+        folderID: collection.documents[i].folder ? collection.documents[i].folder.$id : null,
+      };
+      log(data);
+      log(collection.documents[i].$id);
+      log('--- --- ---')
+      await databases.updateDocument(adb['App'], adbc['Events'], collection.documents[i].$id, data);
+    }
   } catch (e) {
     error(e);
   }
