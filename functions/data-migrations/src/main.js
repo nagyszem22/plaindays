@@ -13,6 +13,10 @@ export default async ({ req, res, error, log }) => {
       .setKey(process.env.APPWRITE_API_KEY);
 
     log(process.env.APPWRITE_FUNCTION_PROJECT_ID);
+    log(process.env.APPWRITE_API_KEY);
+    log(appwriteEndpoint);
+    log(adb['App']);
+    log(adbc['Events']);
 
     const collection = await databases.listDocuments(adb['App'], adbc['Events'], [
       Query.select(['$id', 'scheduleType', 'folder' ]),
